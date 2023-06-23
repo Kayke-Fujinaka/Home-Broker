@@ -22,7 +22,7 @@ func main() {
 	configMap := &ckafka.ConfigMap{
 		"bootstrap.servers": "host.docker.internal:9094",
 		"group.id":          "myGroup",
-		"auto.offset.reset": "earliest",
+		"auto.offset.reset": "latest",
 	}
 	producer := kafka.NewKafkaProducer(configMap)
 	kafka := kafka.NewConsumer(configMap, []string{"input"})
@@ -48,6 +48,7 @@ func main() {
 		for res := range ordersOut {
 			output := transformer.TransformerOutput(res)
 			outputJson, err := json.MarshalIndent(output, "", " ")
+			fmt.Println(string(outputJson))
 			if err != nil {
 				fmt.Println(err)
 			}
