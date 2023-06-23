@@ -44,15 +44,15 @@ func main() {
 			order := transformer.TransformInput(tradeInput)
 			ordersIn <- order
 		}
-
-		for res := range ordersOut {
-			output := transformer.TransformerOutput(res)
-			outputJson, err := json.MarshalIndent(output, "", " ")
-			fmt.Println(string(outputJson))
-			if err != nil {
-				fmt.Println(err)
-			}
-			producer.Publish(outputJson, []byte("orders"), "output")
-		}
 	}()
+
+	for res := range ordersOut {
+		output := transformer.TransformOutput(res)
+		outputJson, err := json.MarshalIndent(output, "", "  ")
+		fmt.Println(string(outputJson))
+		if err != nil {
+			fmt.Println(err)
+		}
+		producer.Publish(outputJson, []byte("orders"), "output")
+	}
 }

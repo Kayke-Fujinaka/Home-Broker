@@ -16,7 +16,7 @@ func TransformInput(input dto.TradeInput) *entity.Order {
 	return order
 }
 
-func TransformerOutput(order *entity.Order) *dto.OrderOutput {
+func TransformOutput(order *entity.Order) *dto.OrderOutput {
 	output := &dto.OrderOutput{
 		OrderID:    order.ID,
 		InvestorID: order.Investor.ID,

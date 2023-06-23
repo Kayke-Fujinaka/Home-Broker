@@ -37,7 +37,6 @@ func (t *Transaction) CloseBuyOrder() {
 	if t.BuyingOrder.PendingShares == 0 {
 		t.BuyingOrder.Status = "CLOSED"
 	}
-
 }
 
 func (t *Transaction) CloseSellOrder() {
