@@ -17,7 +17,7 @@ model Asset {
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
   WalletAssets WalletAsset[]
-  Order        Order[]
+  Orders       Order[]
 }
 
 model Wallet {
@@ -25,7 +25,7 @@ model Wallet {
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
   WalletAssets WalletAsset[]
-  Order        Order[]
+  Orders       Order[]
 }
 
 model WalletAsset {
@@ -52,7 +52,6 @@ model Order {
   type       OrderType
   status     OrderStatus
   partial    Int         @db.Int
-  version    Int
   created_at DateTime    @default(now())
   updated_at DateTime    @updatedAt
 }

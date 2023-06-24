@@ -39,10 +39,11 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:3000/wallets/wallet1/orders
+POST http://localhost:3000/orders
 Content-Type: application/json
 
 {
+  "wallet_id": "wallet1",
   "asset_id": "asset1",
   "shares": 5,
   "price": 100,
@@ -50,7 +51,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:3000/wallets/wallet2/orders
+POST http://localhost:3000/orders
 Content-Type: application/json
 
 {
@@ -61,10 +62,10 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:3000/wallets/wallet1/orders
+GET http://localhost:3000/orders
 
 ###
-POST http://localhost:3000/wallets/wallet1/orders/execute
+POST http://localhost:3000/orders/execute
 Content-Type: application/json
 
 {
