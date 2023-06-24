@@ -5,6 +5,10 @@ import { PrismaService } from 'src/prisma/prisma/prisma.service';
 export class WalletsService {
   constructor(private prismaService: PrismaService) {}
 
+  all() {
+    return this.prismaService.wallet.findMany();
+  }
+
   create(input: { id: string }) {
     return this.prismaService.wallet.create({
       data: {

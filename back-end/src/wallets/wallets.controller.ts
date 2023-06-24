@@ -1,9 +1,14 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { WalletsService } from './wallets.service';
 
 @Controller('wallets')
 export class WalletsController {
   constructor(private readonly walletsService: WalletsService) {}
+
+  @Get()
+  all() {
+    return this.walletsService.all();
+  }
 
   @Post()
   create(@Body() body: { id: string }) {
