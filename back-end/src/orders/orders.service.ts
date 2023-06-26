@@ -27,8 +27,8 @@ export class OrdersService {
     });
   }
 
-  initTransaction(input: InitTransactionDto) {
-    return this.prismaService.order.create({
+  async initTransaction(input: InitTransactionDto) {
+    const order = await this.prismaService.order.create({
       data: {
         asset_id: input.asset_id,
         wallet_id: input.wallet_id,
@@ -37,8 +37,11 @@ export class OrdersService {
         price: input.price,
         type: input.type,
         status: OrderStatus.PENDING,
+        version: 1,
       },
     });
+
+    return order;
   }
 
   async executeTransaction(input: InputExecuteTransactionDto) {
@@ -48,7 +51,7 @@ export class OrdersService {
       });
 
       await prisma.order.update({
-        where: { id: input.order_id },
+        where: { id: input.order_id, version: order.version },
         data: {
           partial: order.partial - input.negotiated_shares,
           status: input.status,
@@ -60,12 +63,20 @@ export class OrdersService {
               price: input.price,
             },
           },
+          version: { increment: 1 },
         },
       });
       if (input.status === OrderStatus.CLOSED) {
         await prisma.asset.update({
           where: { id: order.asset_id },
           data: {
+            price: input.price,
+          },
+        });
+        await this.prismaService.assetDaily.create({
+          data: {
+            asset_id: order.asset_id,
+            date: new Date(),
             price: input.price,
           },
         });
@@ -78,18 +89,21 @@ export class OrdersService {
           },
         });
         if (walletAsset) {
+          console.log(walletAsset);
           await prisma.walletAsset.update({
             where: {
               wallet_id_asset_id: {
                 asset_id: order.asset_id,
                 wallet_id: order.wallet_id,
               },
+              version: walletAsset.version,
             },
             data: {
               shares:
-                order.type == OrderType.BUY
-                  ? walletAsset.shares + input.negotiated_shares
-                  : walletAsset.shares - input.negotiated_shares,
+                order.type === OrderType.BUY
+                  ? walletAsset.shares + order.shares
+                  : walletAsset.shares - order.shares,
+              version: { increment: 1 },
             },
           });
         } else {
@@ -98,6 +112,7 @@ export class OrdersService {
               asset_id: order.asset_id,
               wallet_id: order.wallet_id,
               shares: input.negotiated_shares,
+              version: 1,
             },
           });
         }

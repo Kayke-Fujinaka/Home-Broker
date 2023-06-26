@@ -9,7 +9,7 @@ export class WalletsService {
     return this.prismaService.wallet.findMany();
   }
 
-  create(input: { id: string }) {
+  async create(input: { id: string }) {
     return this.prismaService.wallet.create({
       data: {
         id: input.id,
