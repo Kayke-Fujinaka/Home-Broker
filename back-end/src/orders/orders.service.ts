@@ -1,11 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus, OrderType } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma/prisma.service';
 import { InitTransactionDto, InputExecuteTransactionDto } from './order.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(private prismaService: PrismaService) {}
+
+  all(filter: { wallet_id: string }) {
+    return this.prismaService.order.findMany({
+      where: {
+        wallet_id: filter.wallet_id,
+      },
+      include: {
+        Transactions: true,
+        Asset: {
+          select: {
+            id: true,
+            symbol: true,
+          },
+        },
+      },
+      orderBy: {
+        updated_at: 'desc',
+      },
+    });
+  }
 
   initTransaction(input: InitTransactionDto) {
     return this.prismaService.order.create({
@@ -66,7 +86,10 @@ export class OrdersService {
               },
             },
             data: {
-              shares: walletAsset.shares + input.negotiated_shares,
+              shares:
+                order.type == OrderType.BUY
+                  ? walletAsset.shares + input.negotiated_shares
+                  : walletAsset.shares - input.negotiated_shares,
             },
           });
         } else {
