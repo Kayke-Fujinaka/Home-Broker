@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
 }
 
 datasource db {
@@ -11,13 +12,39 @@ datasource db {
 }
 
 model Asset {
-  id           String        @id @map("_id")
+  id           String         @id @map("_id")
   symbol       String
   price        Float
-  created_at   DateTime      @default(now())
-  updated_at   DateTime      @updatedAt
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
   WalletAssets WalletAsset[]
   Orders       Order[]
+  Histories    AssetHistory[] @relation("Histories")
+  Dailies      AssetDaily[]   @relation("Dailies")
+}
+
+model AssetHistory {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  asset_id   String
+  asset      Asset    @relation("Histories", fields: [asset_id], references: [id])
+  date       DateTime @db.Date
+  open       Float    @db.Double
+  high       Float    @db.Double
+  low        Float    @db.Double
+  close      Float    @db.Double
+  volume     Float    @db.Double
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model AssetDaily {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  asset_id   String
+  asset      Asset    @relation("Dailies", fields: [asset_id], references: [id])
+  price      Float    @db.Double
+  date       DateTime @db.Date
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Wallet {
@@ -35,6 +62,7 @@ model WalletAsset {
   Asset      Asset    @relation(fields: [asset_id], references: [id])
   asset_id   String
   shares     Int      @db.Int
+  version    Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -52,6 +80,7 @@ model Order {
   type         OrderType
   status       OrderStatus
   partial      Int           @db.Int
+  version      Int
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
   Transactions Transaction[]
