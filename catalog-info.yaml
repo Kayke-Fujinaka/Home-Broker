@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: Home-Broker
+  annotations:
+    github.com/project-slug: Kayke-Fujinaka/Home-Broker
+spec:
+  type: other
+  lifecycle: unknown
+  owner: guests
