@@ -30,7 +30,8 @@
 			"extensions": [
 				"humao.rest-client",
 				"esbenp.prettier-vscode",
-				"dbaeumer.vscode-eslint"
+				"dbaeumer.vscode-eslint",
+				"bradlc.vscode-tailwindcss"
 			]
 		}
 	}
